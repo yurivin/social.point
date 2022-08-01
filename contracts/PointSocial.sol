@@ -7,7 +7,8 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
-import "point-contract-manager/contracts/IIdentity.sol";
+import "./point-contracts/IIdentityUtils.sol";
+import "./point-contracts/IIdentity.sol";
 
 contract PointSocial is Initializable, UUPSUpgradeable, OwnableUpgradeable {
     using Counters for Counters.Counter;
@@ -62,10 +63,9 @@ contract PointSocial is Initializable, UUPSUpgradeable, OwnableUpgradeable {
         Action indexed action
     );
 
-    event ProfileChange(address indexed from, uint256 indexed date);
+    IIdentityUtils _identityUtils;
 
-    address private _identityContractAddr;
-    string private _identityHandle;
+    event ProfileChange(address indexed from, uint256 indexed date);
 
     // posts
     uint256[] public postIds;
@@ -130,19 +130,17 @@ contract PointSocial is Initializable, UUPSUpgradeable, OwnableUpgradeable {
     }
 
     function initialize(
-        address identityContractAddr,
-        string calldata identityHandle
+        address identityUtilsAddr
     ) public initializer onlyProxy {
+        _identityUtils = IIdentityUtils(identityUtilsAddr);
         __Ownable_init();
         __UUPSUpgradeable_init();
-        _identityContractAddr = identityContractAddr;
-        _identityHandle = identityHandle;
     }
 
     function _authorizeUpgrade(address) internal view override {
         require(
-            IIdentity(_identityContractAddr).isIdentityDeployer(
-                _identityHandle,
+            IIdentity(_identityUtils._identityContractAddr()).isIdentityDeployer(
+                _identityUtils._identityHandle(),
                 msg.sender
             ),
             "You are not a deployer of this identity"
@@ -159,10 +157,6 @@ contract PointSocial is Initializable, UUPSUpgradeable, OwnableUpgradeable {
             Component.Contract,
             Action.Migrator
         );
-    }
-
-    function isDeployer() public view returns (bool) {
-        return IIdentity(_identityContractAddr).isIdentityDeployer(_identityHandle, msg.sender);
     }
 
     // Post data functions
@@ -237,7 +231,7 @@ contract PointSocial is Initializable, UUPSUpgradeable, OwnableUpgradeable {
     }
 
     function flagPost(uint256 postId) public {
-        require(IIdentity(_identityContractAddr).isIdentityDeployer(_identityHandle, msg.sender), 
+        require(IIdentity(_identityUtils._identityContractAddr()).isIdentityDeployer(_identityUtils._identityHandle(), msg.sender), 
             "ERROR_PERMISSION_DENIED");
         require(postById[postId].createdAt != 0, "ERROR_POST_DOES_NOT_EXISTS");
 
