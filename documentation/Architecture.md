@@ -11,5 +11,16 @@
 7. Make it possible to downgrade smart contracts suite.
 8. Extract more general Point network libraries and more specific point social libraries.
 
+## Plans
+1. Extract Identityutils
+2. Extract Migrator
+3. Extract Profile
+4. Extract Migratable
+5. Extract Pointinitializable
+6. Extract Content
+7. Write more tests
+8. Adopt social for diamond pattern
+
 ## Questions
 1. It is intended to store data ofchain and we can only have hases onchain to check it. Is it acceptable on the current stage?
+2. Needed to think how data migration issues will be solved.

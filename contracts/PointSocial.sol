@@ -9,6 +9,7 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
 import "./point-contracts/IIdentityUtils.sol";
 import "./point-contracts/IIdentity.sol";
+import "./point-contracts/IMigrator.sol";
 
 contract PointSocial is Initializable, UUPSUpgradeable, OwnableUpgradeable {
     using Counters for Counters.Counter;
@@ -47,14 +48,6 @@ contract PointSocial is Initializable, UUPSUpgradeable, OwnableUpgradeable {
         bool active;
     }
 
-    struct Profile {
-        bytes32 displayName;
-        bytes32 displayLocation;
-        bytes32 displayAbout;
-        bytes32 avatar;
-        bytes32 banner;
-    }
-
     event StateChange(
         uint256 indexed id,
         address from,
@@ -64,8 +57,7 @@ contract PointSocial is Initializable, UUPSUpgradeable, OwnableUpgradeable {
     );
 
     IIdentityUtils _identityUtils;
-
-    event ProfileChange(address indexed from, uint256 indexed date);
+    IMigrator _migrator;
 
     // posts
     uint256[] public postIds;
@@ -81,12 +73,9 @@ contract PointSocial is Initializable, UUPSUpgradeable, OwnableUpgradeable {
     mapping(uint256 => uint256[]) public likeIdsByPost;
     mapping(uint256 => Like) public likeById;
 
-    address private _migrator;
-    mapping(address => Profile) public profileByOwner;
     mapping(uint256 => bool) public postIsFlagged;
 
     enum Action {
-        Migrator,
         Create,
         Like,
         Comment,
@@ -97,7 +86,6 @@ contract PointSocial is Initializable, UUPSUpgradeable, OwnableUpgradeable {
     }
 
     enum Component {
-        Contract,
         Feed,
         Post,
         Comment
@@ -130,11 +118,13 @@ contract PointSocial is Initializable, UUPSUpgradeable, OwnableUpgradeable {
     }
 
     function initialize(
-        address identityUtilsAddr
+        address identityUtilsAddr,
+        address migratorAddr
     ) public initializer onlyProxy {
-        _identityUtils = IIdentityUtils(identityUtilsAddr);
         __Ownable_init();
         __UUPSUpgradeable_init();
+        _identityUtils = IIdentityUtils(identityUtilsAddr);
+        _migrator = IMigrator(migratorAddr);
     }
 
     function _authorizeUpgrade(address) internal view override {
@@ -144,18 +134,6 @@ contract PointSocial is Initializable, UUPSUpgradeable, OwnableUpgradeable {
                 msg.sender
             ),
             "You are not a deployer of this identity"
-        );
-    }
-
-    function addMigrator(address migrator) public onlyOwner {
-        require(_migrator == address(0), "Access Denied");
-        _migrator = migrator;
-        emit StateChange(
-            0,
-            msg.sender,
-            block.timestamp,
-            Component.Contract,
-            Action.Migrator
         );
     }
 
@@ -630,25 +608,6 @@ contract PointSocial is Initializable, UUPSUpgradeable, OwnableUpgradeable {
         return false;
     }
 
-    function setProfile(
-        bytes32 name_,
-        bytes32 location_,
-        bytes32 about_,
-        bytes32 avatar_,
-        bytes32 banner_
-    ) public {
-        profileByOwner[msg.sender].displayName = name_;
-        profileByOwner[msg.sender].displayLocation = location_;
-        profileByOwner[msg.sender].displayAbout = about_;
-        profileByOwner[msg.sender].avatar = avatar_;
-        profileByOwner[msg.sender].banner = banner_;
-        emit ProfileChange(msg.sender, block.timestamp);
-    }
-
-    function getProfile(address id_) public view returns (Profile memory) {
-        return profileByOwner[id_];
-    }
-
     // Data Migrator Functions - only callable by _migrator
 
     function add(
@@ -659,7 +618,7 @@ contract PointSocial is Initializable, UUPSUpgradeable, OwnableUpgradeable {
         uint16 likesCount,
         uint256 createdAt
     ) public {
-        require(msg.sender == _migrator, "Access Denied");
+        require(_migrator.isMigrator(msg.sender), "Access Denied");
 
         Post memory _post = Post({
             id: id,
@@ -692,7 +651,7 @@ contract PointSocial is Initializable, UUPSUpgradeable, OwnableUpgradeable {
         bytes32 contents,
         uint256 createdAt
     ) public {
-        require(msg.sender == _migrator, "Access Denied");
+        require(_migrator.isMigrator(msg.sender), "Access Denied");
 
         Comment memory _comment = Comment({
             id: id,
@@ -714,24 +673,5 @@ contract PointSocial is Initializable, UUPSUpgradeable, OwnableUpgradeable {
             Component.Comment,
             Action.Comment
         );
-    }
-
-    function addProfile(
-        address user,
-        bytes32 name,
-        bytes32 location,
-        bytes32 about,
-        bytes32 avatar,
-        bytes32 banner
-    ) public {
-        require(msg.sender == _migrator, "Access Denied");
-
-        profileByOwner[user].displayName = name;
-        profileByOwner[user].displayLocation = location;
-        profileByOwner[user].displayAbout = about;
-        profileByOwner[user].avatar = avatar;
-        profileByOwner[user].banner = banner;
-
-        emit ProfileChange(user, block.timestamp);
     }
 }
