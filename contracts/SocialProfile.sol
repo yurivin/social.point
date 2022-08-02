@@ -19,11 +19,6 @@ contract SocialProfile is Initializable, UUPSUpgradeable, OwnableUpgradeable {
         bytes32 banner;
     }
 
-    modifier onlySocial {
-        require(msg.sender == _socialAddr, "Not a Social contract");
-        _;
-    }
-
     IMigrator public _migrator;
     IIdentityUtils public _identityUtils;
     address public _socialAddr;
@@ -38,7 +33,7 @@ contract SocialProfile is Initializable, UUPSUpgradeable, OwnableUpgradeable {
         bytes32 about_,
         bytes32 avatar_,
         bytes32 banner_
-    ) external onlySocial {
+    ) external {
         profileByOwner[msg.sender].displayName = name_;
         profileByOwner[msg.sender].displayLocation = location_;
         profileByOwner[msg.sender].displayAbout = about_;
@@ -59,7 +54,7 @@ contract SocialProfile is Initializable, UUPSUpgradeable, OwnableUpgradeable {
         bytes32 about,
         bytes32 avatar,
         bytes32 banner
-    ) public onlySocial {
+    ) public {
         require(_migrator.isMigrator(msg.sender), "Access Denied");
 
         profileByOwner[user].displayName = name;
