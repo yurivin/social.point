@@ -47,7 +47,7 @@ describe("PointSocial contract", function () {
             '0xed17268897bbcb67127ed550cee2068a15fdb6f69097eebeb6e2ace46305d1ce',
             '0xe1e032c91d4c8fe6bab1f198871dbafb8842f073acff8ee9b822f748b180d7eb');
           await identityContract.addIdentityDeployer(handle, addr1.address);
-          const factory = await ethers.getContractFactory("PointSocial");
+          const factory = await ethers.getContractFactory("SocialContent");
           let socialFactoryDeployer = factory.connect(addr1);
     
           await upgrades.upgradeProxy(pointSocial.address, socialFactoryDeployer);
@@ -61,7 +61,7 @@ describe("PointSocial contract", function () {
             '0xed17268897bbcb67127ed550cee2068a15fdb6f69097eebeb6e2ace46305d1ce',
             '0xe1e032c91d4c8fe6bab1f198871dbafb8842f073acff8ee9b822f748b180d7eb');
     
-          const factory = await ethers.getContractFactory("PointSocial");
+          const factory = await ethers.getContractFactory("SocialContent");
           let socialFactoryDeployer = factory.connect(addr1);
           await expect(
             upgrades.upgradeProxy(pointSocial.address, socialFactoryDeployer)

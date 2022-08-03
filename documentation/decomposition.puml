@@ -30,12 +30,30 @@ PointIdUupsProxyble <|-- Initializable
 PointIdUupsProxyble <|-- UUPSUpgradeable
 PointIdUupsProxyble <|-- OwnableUpgradeable
 
-enum Action {
+enum MigrationAction {
     INIT,
     ADD,
     DELETE
 }
 
-Migratable *-- Action
+enum SocialAction {
+        Create,
+        Like,
+        Comment,
+        Edit,
+        Delete,
+        Dislike,
+        Flag
+}
+
+enum SocialComponent {
+        Feed,
+        Post,
+        Comment
+}
+
+Migratable *-- MigrationAction
+SocialContent *-- SocialAction
+SocialContent *-- SocialComponent
 
 @enduml
