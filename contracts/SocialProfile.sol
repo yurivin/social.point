@@ -8,8 +8,10 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "./point-contracts/IMigrator.sol";
 import "./point-contracts/IIdentityUtils.sol";
 import "./point-contracts/IIdentity.sol";
+import "./point-contracts/Migratable.sol";
 
-contract SocialProfile is Initializable, UUPSUpgradeable, OwnableUpgradeable {
+
+contract SocialProfile is Migratable, Initializable, UUPSUpgradeable, OwnableUpgradeable {
 
     struct Profile {
         bytes32 displayName;
@@ -19,9 +21,7 @@ contract SocialProfile is Initializable, UUPSUpgradeable, OwnableUpgradeable {
         bytes32 banner;
     }
 
-    IMigrator public _migrator;
     IIdentityUtils public _identityUtils;
-    address public _socialAddr;
 
     mapping(address => Profile) public profileByOwner;
 
@@ -54,8 +54,7 @@ contract SocialProfile is Initializable, UUPSUpgradeable, OwnableUpgradeable {
         bytes32 about,
         bytes32 avatar,
         bytes32 banner
-    ) public {
-        require(_migrator.isMigrator(msg.sender), "Access Denied");
+    ) public onlyMigrator {
 
         profileByOwner[user].displayName = name;
         profileByOwner[user].displayLocation = location;
@@ -84,9 +83,5 @@ contract SocialProfile is Initializable, UUPSUpgradeable, OwnableUpgradeable {
             ),
             "You are not a deployer of this identity"
         );
-    }
-
-    function setSocial(address socialAddr) external onlyOwner {
-        _socialAddr = socialAddr;
     }
 }

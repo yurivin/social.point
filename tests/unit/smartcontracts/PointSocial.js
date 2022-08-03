@@ -32,8 +32,8 @@ describe("PointSocial contract", function () {
         socialProfile = await upgrades.deployProxy(profileFactory, [identityUtils.address, migrator.address], {kind: 'uups'});
         await socialProfile.deployed();
 
-        const socialsfactory = await ethers.getContractFactory("PointSocial");
-        pointSocial = await upgrades.deployProxy(socialsfactory, [identityUtils.address, migrator.address], {kind: 'uups'});        
+        const socialfactory = await ethers.getContractFactory("SocialContent");
+        pointSocial = await upgrades.deployProxy(socialfactory, [identityUtils.address, migrator.address], {kind: 'uups'});        
         await pointSocial.deployed();
     });
 

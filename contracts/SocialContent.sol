@@ -9,9 +9,9 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
 import "./point-contracts/IIdentityUtils.sol";
 import "./point-contracts/IIdentity.sol";
-import "./point-contracts/IMigrator.sol";
+import "./point-contracts/Migratable.sol";
 
-contract PointSocial is Initializable, UUPSUpgradeable, OwnableUpgradeable {
+contract SocialContent is Migratable, Initializable, UUPSUpgradeable, OwnableUpgradeable {
     using Counters for Counters.Counter;
     Counters.Counter internal _postIds;
     Counters.Counter internal _commentIds;
@@ -56,8 +56,7 @@ contract PointSocial is Initializable, UUPSUpgradeable, OwnableUpgradeable {
         Action indexed action
     );
 
-    IIdentityUtils _identityUtils;
-    IMigrator _migrator;
+    IIdentityUtils public _identityUtils;
 
     // posts
     uint256[] public postIds;
@@ -617,8 +616,7 @@ contract PointSocial is Initializable, UUPSUpgradeable, OwnableUpgradeable {
         bytes32 image,
         uint16 likesCount,
         uint256 createdAt
-    ) public {
-        require(_migrator.isMigrator(msg.sender), "Access Denied");
+    ) public onlyMigrator {
 
         Post memory _post = Post({
             id: id,
@@ -650,8 +648,7 @@ contract PointSocial is Initializable, UUPSUpgradeable, OwnableUpgradeable {
         address author,
         bytes32 contents,
         uint256 createdAt
-    ) public {
-        require(_migrator.isMigrator(msg.sender), "Access Denied");
+    ) public onlyMigrator {
 
         Comment memory _comment = Comment({
             id: id,
