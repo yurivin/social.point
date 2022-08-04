@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./point-contracts/IMigrator.sol";
-import "./point-contracts/IIdentityUtils.sol";
 import "./point-contracts/IIdentity.sol";
-import "./point-contracts/Migratable.sol";
-import "./point-contracts/UupsProxible.sol";
+
+import "./IMigrator.sol";
+import "./IIdentityUtils.sol";
+import "./Migratable.sol";
+import "./UupsProxible.sol";
 
 
 contract SocialProfile is Migratable, UupsProxible {

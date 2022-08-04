@@ -4,10 +4,11 @@ pragma experimental ABIEncoderV2;
 
 import "@openzeppelin/contracts/utils/Counters.sol";
 
-import "./point-contracts/IIdentityUtils.sol";
 import "./point-contracts/IIdentity.sol";
-import "./point-contracts/Migratable.sol";
-import "./point-contracts/UupsProxible.sol";
+
+import "./IIdentityUtils.sol";
+import "./Migratable.sol";
+import "./UupsProxible.sol";
 
 contract SocialContent is Migratable, UupsProxible {
     using Counters for Counters.Counter;
