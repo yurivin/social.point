@@ -3,15 +3,13 @@ pragma solidity >=0.8.0;
 pragma experimental ABIEncoderV2;
 
 import "@openzeppelin/contracts/utils/Counters.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
 import "./point-contracts/IIdentityUtils.sol";
 import "./point-contracts/IIdentity.sol";
 import "./point-contracts/Migratable.sol";
+import "./point-contracts/UupsProxible.sol";
 
-contract SocialContent is Migratable, Initializable, UUPSUpgradeable, OwnableUpgradeable {
+contract SocialContent is Migratable, UupsProxible {
     using Counters for Counters.Counter;
     Counters.Counter internal _postIds;
     Counters.Counter internal _commentIds;

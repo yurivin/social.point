@@ -33,12 +33,10 @@
 ## Future steps
 1. Adopt Point.Social for diamond pattern - for Updatable faucet feature
     1. Issue: Needed to search for common well tested implementation suitable for our needs
-2. Extract content storage from a smart contract to off-chain Decentralized storage. Probably only hashes should be stored in the smart contract.
-    1. Issue: Not clear how our future off-chain decentralized storage engine will be designed.
-3. Replace Ownable with OpenZeppelin AccessControl (role based access engine)
+2. Replace Ownable with OpenZeppelin AccessControl (role based access engine)
    1. Currently, there is a different approach to set owner and migrator. With AccessControl we can replace these 2 approaches with a single one.
-4. SmartContract versioning framework
-5. Separate content and content metadata and make entities down->up linked instead of up->down to reduce dependencies. 
+3. SmartContract versioning framework
+4. Separate content and content metadata and make entities down->up linked instead of up->down to reduce dependencies. 
    1. Requires more significant code changes related to logic encapsulation than just refactoring. For example exclude likes related counter update from a Post entity. Exclude comments data from post etc.
    2. This approach also will reduce storage operations costs.
-6. Add index to Profile entity.
+5. Add index to Profile entity.
