@@ -3,6 +3,9 @@
 
 class SoicialProfile
 class SocialContent
+class IdentityUtils
+class Identity
+
 abstract PointIdUupsProxyble
 abstract Migratable
 
@@ -12,12 +15,17 @@ abstract OwnableUpgradeable
 
 interface ISocialProfile
 interface ISocialContent
+interface IIdentity
 
 SocialRouter o-- SoicialProfile
 SocialRouter o-- SocialContent
+IdentityUtils o-- Idenity
+SoicialProfile o-- IdentityUtils
+SocialContent o-- IdentityUtils
 
 SoicialProfile <|.. ISocialProfile
 SocialContent <|.. ISocialContent
+Identity <|.. IIdentity
 
 SocialRouter <|.. PointIdUupsProxyble
 SoicialProfile <|.. PointIdUupsProxyble
@@ -26,9 +34,9 @@ SocialContent <|.. PointIdUupsProxyble
 SoicialProfile <|.. Migratable
 SocialContent <|.. Migratable
 
-PointIdUupsProxyble <|-- Initializable
-PointIdUupsProxyble <|-- UUPSUpgradeable
-PointIdUupsProxyble <|-- OwnableUpgradeable
+Initializable <|-- PointIdUupsProxyble
+UUPSUpgradeable <|-- PointIdUupsProxyble
+OwnableUpgradeable <|-- PointIdUupsProxyble
 
 enum MigrationAction {
     INIT,

@@ -19,8 +19,8 @@
 1. + Extract IdentityUtils
 2. + Extract Migrator
 3. + Extract Profile
-4. Extract Migratable
-5. Extract PointInitializable
+4. + Extract Migratable
+5. + Extract PointInitializable
 6. + Extract Content (PointSocial currently)
 7. Write more tests
 9. Data migration tools update https://github.com/pointnetwork/point-contracts/blob/main/tasks/importer/social-migrator.ts
